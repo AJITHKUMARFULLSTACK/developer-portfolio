@@ -1,15 +1,23 @@
-import { useEffect, useState } from 'react'
-import { DEVELOPER_NAME } from '../constants'
+import { useEffect, useId, useState } from 'react'
+import CloseIcon from '@mui/icons-material/Close'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import MenuIcon from '@mui/icons-material/Menu'
+import { Logo } from './Logo'
 
-const links = [
-  { href: '#about', label: 'About' },
-  { href: '#services', label: 'Services' },
-  { href: '#why-me', label: 'Why Us' },
-  { href: '#contact', label: 'Contact' },
+const navLinkClass =
+  'inline-flex h-11 items-center text-[15px] font-medium text-ink link-underline hover:text-brand'
+
+const serviceLinks = [
+  { href: '#service-design', label: 'Design' },
+  { href: '#service-development', label: 'Development' },
+  { href: '#service-content', label: 'Content' },
+  { href: '#service-brand', label: 'Branding' },
 ] as const
 
 export function Navbar() {
   const [open, setOpen] = useState(false)
+  const [servicesOpen, setServicesOpen] = useState(false)
+  const menuId = useId()
 
   useEffect(() => {
     const onResize = () => {
@@ -27,70 +35,120 @@ export function Navbar() {
     }
   }, [open])
 
+  const close = () => {
+    setOpen(false)
+    setServicesOpen(false)
+  }
+
   return (
-    <header className="sticky top-0 z-50 border-b border-stone-200/80 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 bg-page/90 backdrop-blur-md">
       <nav
-        className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8"
+        className="relative mx-auto flex h-[4.25rem] max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8"
         aria-label="Main"
       >
-        <a
-          href="#"
-          className="text-lg font-bold tracking-tight text-navy"
-          onClick={() => setOpen(false)}
-        >
-          {DEVELOPER_NAME}
+        <a href="#home" className="flex shrink-0 items-center overflow-visible" onClick={close}>
+          <Logo className="h-10 w-auto max-w-[9rem] sm:h-11" />
         </a>
 
-        <ul className="hidden items-center gap-10 md:flex">
-          {links.map(({ href, label }) => (
-            <li key={href}>
-              <a
-                href={href}
-                className="text-[15px] font-medium text-body/90 transition-colors hover:text-navy"
-              >
-                {label}
-              </a>
-            </li>
-          ))}
+        <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-10 md:flex">
+          <li>
+            <a href="#home" className={navLinkClass}>
+              Home
+            </a>
+          </li>
+          <li>
+            <a href="#about" className={navLinkClass}>
+              About us
+            </a>
+          </li>
+          <li
+            className="relative"
+            onMouseEnter={() => setServicesOpen(true)}
+            onMouseLeave={() => setServicesOpen(false)}
+          >
+            <a
+              href="#services"
+              className={`${navLinkClass} gap-0.5`}
+              aria-expanded={servicesOpen}
+              aria-haspopup="true"
+            >
+              Our services
+              <KeyboardArrowDownIcon
+                sx={{ fontSize: 20 }}
+                className={`transition-transform duration-200 ${servicesOpen ? 'rotate-180' : ''}`}
+                aria-hidden
+              />
+            </a>
+            {servicesOpen && (
+              <ul className="nav-dropdown absolute left-1/2 top-full z-20 min-w-44 -translate-x-1/2 pt-2">
+                <li className="rounded-2xl bg-white p-2 shadow-lg ring-1 ring-brand/10">
+                  <ul>
+                    {serviceLinks.map((item) => (
+                      <li key={item.href}>
+                        <a
+                          href={item.href}
+                          className="block rounded-xl px-3 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-lilac hover:text-brand"
+                        >
+                          {item.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              </ul>
+            )}
+          </li>
         </ul>
 
-        <button
-          type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md text-navy md:hidden"
-          aria-expanded={open}
-          aria-controls="mobile-nav"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          onClick={() => setOpen((v) => !v)}
-        >
-          {open ? (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ) : (
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          )}
-        </button>
+        <div className="flex h-11 items-center justify-end gap-2">
+          <a
+            href="#contact"
+            className="btn-primary hidden h-11 items-center justify-center rounded-full bg-brand px-5 text-sm font-semibold text-white md:inline-flex"
+          >
+            Contact us
+          </a>
+          <button
+            type="button"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full text-ink md:hidden"
+            aria-expanded={open}
+            aria-controls={menuId}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <CloseIcon aria-hidden /> : <MenuIcon aria-hidden />}
+          </button>
+        </div>
       </nav>
 
       {open && (
-        <div
-          id="mobile-nav"
-          className="border-t border-stone-200/80 bg-white px-4 py-4 md:hidden"
-        >
+        <div id={menuId} className="border-t border-brand/10 bg-page px-4 py-4 md:hidden">
           <ul className="flex flex-col gap-1">
-            {links.map(({ href, label }) => (
-              <li key={href}>
-                <a
-                  href={href}
-                  className="block rounded-md px-3 py-3 text-base font-medium text-body hover:bg-card"
-                  onClick={() => setOpen(false)}
-                >
-                  {label}
+            <li>
+              <a href="#home" className="block rounded-xl px-3 py-3 text-base font-medium" onClick={close}>
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="#about" className="block rounded-xl px-3 py-3 text-base font-medium" onClick={close}>
+                About us
+              </a>
+            </li>
+            {serviceLinks.map((item) => (
+              <li key={item.href}>
+                <a href={item.href} className="block rounded-xl px-3 py-3 text-base font-medium" onClick={close}>
+                  {item.label}
                 </a>
               </li>
             ))}
+            <li>
+              <a
+                href="#contact"
+                className="btn-primary mt-2 flex h-11 items-center justify-center rounded-full bg-brand px-5 text-base font-semibold text-white"
+                onClick={close}
+              >
+                Contact us
+              </a>
+            </li>
           </ul>
         </div>
       )}

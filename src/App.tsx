@@ -1,25 +1,25 @@
 import { About } from './components/About'
-import { Contact } from './components/Contact'
 import { FloatingWhatsApp } from './components/FloatingWhatsApp'
 import { Footer } from './components/Footer'
 import { Hero } from './components/Hero'
 import { Navbar } from './components/Navbar'
+import { ServiceBlog } from './components/ServiceBlog'
 import { Services } from './components/Services'
-import { WhyMe } from './components/WhyMe'
+import { WhoWeAre } from './components/WhoWeAre'
 
 function App() {
   return (
     <div className="min-h-svh">
       <Navbar />
-      <main className="pb-24 md:pb-0">
+      <main>
         <Hero />
+        <WhoWeAre />
         <About />
         <Services />
-        <WhyMe />
-        <Contact />
       </main>
       <Footer />
       <FloatingWhatsApp />
+      <ServiceBlog />
     </div>
   )
 }
